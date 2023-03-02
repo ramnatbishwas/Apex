@@ -1,0 +1,11 @@
+//How To Query Users Assigned A Specific Permission Set
+
+Id permissionSetId = [SELECT Id, Type, Description, Name FROM PermissionSet WHERE Name = 'Internal_Business' LIMIT 1].Id;
+
+Set<Id> userIds = new Set<Id>();
+
+for(PermissionSetAssignment permAssignment:[SELECT Id, AssigneeId FROM PermissionSetAssignment WHERE PermissionSetId =: permissionSetId]){
+    userIds.add(permAssignment.AssigneeId);
+}
+
+System.debug('User Ids that have permission set: ' + userIds);
