@@ -1,0 +1,46 @@
+public with sharing class OpportunityHistoryController {
+    @AuraEnabled(cacheable=true)
+   // public static Date getPreviousCloseDate(Id opportunityId,String newReason) {
+        public static Date getPreviousCloseDate(Id opportunityId) {
+        if (!Schema.sObjectType.OpportunityFieldHistory.isAccessible()) {
+            throw new AuraHandledException('You do not have permission to access OpportunityFieldHistory.');
+        }
+
+        List<OpportunityFieldHistory> historyRecords = [
+            SELECT OldValue, NewValue 
+            FROM OpportunityFieldHistory 
+            WHERE Field = 'CloseDate' 
+            AND OpportunityId = :opportunityId 
+            ORDER BY CreatedDate DESC 
+            LIMIT 1
+        ];
+        system.debug('historyRecords: ' + historyRecords);
+
+        if (!historyRecords.isEmpty() && historyRecords[0].OldValue != null) {
+            return Date.valueOf(historyRecords[0].OldValue);
+        }
+
+        // if (!Schema.sObjectType.Opportunity.isAccessible() || !Schema.sObjectType.Opportunity.fields.Slipped_Deal_Reason_Test_Text__c.isAccessible()) {
+        //     throw new AuraHandledException('You do not have permission to access Opportunity or its fields.');
+        // }
+        // Opportunity opp = [SELECT Id, Slipped_Deal_Reason_Test_Text__c FROM Opportunity WHERE Id = :opportunityId LIMIT 1];
+        // // Append new reason with a comma if there's an existing value
+        // if (!String.isEmpty(opp.Slipped_Deal_Reason_Test_Text__c)) {
+        //     opp.Slipped_Deal_Reason_Test_Text__c += ', ' + newReason;
+        // } else {
+        //     opp.Slipped_Deal_Reason_Test_Text__c = newReason;
+        // }
+
+        // if (Schema.sObjectType.Opportunity.isUpdateable()) {
+        //     update opp;
+        // } else {
+        //     throw new AuraHandledException('You do not have permission to update Opportunity.');
+        // }
+    
+
+       
+
+        return null; // No history found
+    
+}
+}
